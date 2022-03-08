@@ -1,0 +1,137 @@
+\documentclass[12pt, fullpage,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\newcommand{\semester}{Spring 2022}
+\newcommand{\assignmentId}{1}
+\newcommand{\releaseDate}{1 Feb, 2022}
+\newcommand{\dueDate}{11:59pm, 18 Feb, 2022}
+
+\newcommand{\bx}{{\bf x}}
+\newcommand{\bw}{{\bf w}}
+
+\title{CS 6190: Probabilistic Machine Learning \semester}
+\author{Homework \assignmentId}
+\date{Handed out: \releaseDate\\
+  Due: \dueDate}
+
+\begin{document}
+\maketitle
+
+\input{emacscomm}
+\footnotesize
+	\begin{itemize}
+		\item You are welcome to talk to other members of the class about
+		the homework. I am more concerned that you understand the
+		underlying concepts. However, you should write down your own
+		solution. Please keep the class collaboration policy in mind.
+		
+		\item Feel free discuss the homework with the instructor or the TAs.
+		
+		\item Your written solutions should be brief and clear. You need to
+		show your work, not just the final answer, but you do \emph{not}
+		need to write it in gory detail. Your assignment should be {\bf no
+			more than 10 pages}. Every extra page will cost a point.
+		
+		\item Handwritten solutions will not be accepted.
+		
+		\item The homework is due by \textbf{midnight of the due date}. Please submit
+		the homework on Canvas.
+	\end{itemize}
+
+
+
+\section*{Analytical problems [80 points + 30 bonus]}	
+\label{sec:q1}
+
+\begin{enumerate}
+\item~[8 points] A random vector, $\x = \left[\begin{array}{c}\x_1 \\  \x_2\end{array}\right]$ follows a multivariate Gaussian distribution, 
+\[
+p(\x) = \N\big( \left[\begin{array}{c}\x_1 \\  \x_2\end{array}\right] |  \left[\begin{array}{c}\bmu_1 \\  \bmu_2\end{array}\right], \left[\begin{array}{cc} \bSigma_{11} & \bSigma_{12} \\  \bSigma_{21} & \bSigma_{22}\end{array}\right]\big).
+\]
+Show that the marginal distribution of $\x_1$ is $p(\x_1) = \N(\x_1| \bmu_1, \bSigma_{11})$.
+
+\item~[\textbf{Bonus}][10 points] Given a Gaussian random vector, $\x \sim \N(\x|\bmu, \bSigma)$.  We have a linear transformation, $\y = \A\x + \b + \z$, where $\A$ and $\b$ are constants, $\z$ is another Gaussian random vector independent to $\x$, $p(\z) = \N(\z|\0, \bLambda)$. Show $\y$ follows Gaussian distribution as well, and derive its form. Hint: using characteristic function. You need to check the materials by yourself. 
+
+\item~[8 points] Show the differential entropy of the a multivariate Gaussian distribution $\N(\x|\bmu, \bSigma)$ is
+\[
+\mathrm{H}[\x] = \frac{1}{2}\log |\bSigma| + \frac{d}{2}(1 + \log 2\pi)
+\]
+where $d$ is the dimension of $\x$.
+\item~[8 points] Derive the Kullback-Leibler divergence between two Gaussian distributions, $p(\x) = \N(\x|\bmu, \bSigma)$ and $q(\x) = \N(\x|\m, \Lambda)$, \ie $\mathrm{KL}(q || p)$.
+
+\item~[8 points] Given a distribution in the exponential family, 
+\[
+p(\x|\boldeta) = \frac{1}{Z(\boldeta)} h(\x)\exp\big(-\u(\x)^\top \boldeta\big).
+\]
+Show that 
+\[
+\frac{\partial^2 \log Z(\boldeta)}{\partial \boldeta^2} = \mathrm{cov}(\u(\x)), 
+\]
+where $\mathrm{cov}$ is the covariance matrix. 
+
+\item~[4 points] Is $\log Z(\boldeta)$ convex or nonconvex? Why?
+
+
+\item~[8 points] Given two random variables $\x$ and $\y$, show that
+\[
+I(\x,\y) = H[\x] - H[\x|\y]
+\]
+where $I(\cdot, \cdot)$ is the mutual information and $H[\cdot]$ the entropy.
+
+\item~[24 points] Convert the following distributions into the form of the exponential-family distribution. Please give the mapping from the expectation parameters to the natural parameters, and also represent the log normalizer as a function of the natural parameters.
+\begin{itemize}
+	\item Dirichlet distribution
+	\item Gamma distribution
+	\item Wishart distribution
+\end{itemize}
+
+\item~[6 points] Does student $t$ distribution (including both the scalar and vector cases) belong to the exponential family? Why?
+
+\item~[6 points] Does the mixture of Gaussian distribution belong to the exponential family? Why? 
+\[
+p(\x) = \frac{1}{2}\N(\x|\bmu, \bSigma) + \frac{1}{2}\N(\x|\m, \bLambda)
+\]
+
+\item~[\textbf{Bonus}][20 points] Given a distribution in the exponential family $p(\x|\boldeta)$, where $\boldeta$ are the natural parameters. As we discussed in the class, the distributions in the exponential family are often parameterized by their expectations, namely $\btheta = \EE\big(\u(\x)\big)$ where $\u(\x)$ are the sufficient statistics (recall Gaussian and Bernoulli distributions). Given an arbitrary distribution $p(\x|\balpha)$, the Fisher information matrix in terms of the distribution parameters $\balpha$ is defined as $\F(\balpha) = \EE_{p(\x|\balpha)}[- \frac{\partial^2 \log(p(\x|\balpha)) }{\partial \balpha^2}]$. 
+\begin{enumerate}
+	\item~[5 points] Show that if we calculate the Fisher Information matrix in terms of the natural parameters, we have $\F(\boldeta) = \mathrm{cov}\big(\u(\x)\big)$.
+	\item~[5 points] Show that $\frac{\partial \btheta}{\partial \boldeta} = \F(\boldeta)$.
+	\item~[10 points] Show that the Fisher information matrix in terms of the expectation parameters is the inverse of that in terms of the natural parameters, $\F(\btheta) =\F^{-1}(\boldeta) $.
+	\item~[5 points] Suppose we observed dataset $\Dcal$. Show that
+	\[
+	\frac{\partial \log p(\Dcal|\boldeta)}{\partial \boldeta} \F(\boldeta)^{-1} = \frac{\partial \log p(\Dcal|\btheta)}{\partial \btheta}
+	\]
+	and 
+	\[
+	 \frac{\partial \log p(\Dcal|\btheta)}{\partial \btheta}\F(\btheta)^{-1} = \frac{\partial \log p(\Dcal|\boldeta)}{\partial \boldeta}.
+	\]
+	Note that I choose the orientation of the gradient vector to be consistent with Jacobian. So, in this case, the gradient vector is a row vector (rather than a column vector). If you want to use a column vector to represent the gradient, you can move the information matrix to the left. It does not influence the conclusion. 
+\end{enumerate}
+\end{enumerate}
+
+\section{Practice [20 points ]}
+\begin{enumerate}
+	\item~[5 Points] Look into the student t's distribution. Let us set the mean and precision to be $\mu = 0$ and $\lambda = 1$. Vary the degree of freedom $\nu = {0.1, 1, 10, 100, 10^6}$ and draw the density of the student t's distribution. Also, draw the density of the standard Gaussian distribution $\N(0,1)$. Please place all the density curves in one figure. Show the legend. What can you observe?
+	
+	\item~[5 points] Draw the density plots for Beta distributions: Beta(1,1), Beta(5, 5) and Beta (10, 10). Put the three density curves in one figure. What do you observe? Next draw the density plots for Beta(1, 2), Beta(5,6) and Beta(10, 11). Put the three density curves in another figure. What do you observe?
+	
+	
+	\item~[10 points] Randomly draw 30 samples from a Gaussian distribution $\N(0, 2)$. Use the 30 samples as your observations to find the maximum likelihood estimation (MLE) for a Gaussian distribution and a student $t$ distribution. For both distributions, please use L-BFGS to optimize the parameters. For student $t$, you need to estimate the degree of the freedom as well. Draw a plot of the estimated the Gaussian distribution density, student $t$ density and the scatter data points. What do you observe, and why? Next, we inject three noises into the data: we append $\{8, 9, 10\}$ to the $30$ samples. Find the MLE for the Gaussian and student $t$ distribution again. Draw the density curves and scatter data points in another figure. What do you observe, and why? 
+	
+	
+	
+
+	
+\end{enumerate}
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,164 @@
+\documentclass[12pt, fullpage,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+
+\newcommand{\semester}{Spring 2022}
+\newcommand{\assignmentId}{0}
+\newcommand{\releaseDate}{10 Jan, 2022}
+\newcommand{\dueDate}{11:59pm, 21 Jan, 2022}
+
+\newcommand{\bx}{{\bf x}}
+\newcommand{\bw}{{\bf w}}
+
+\title{CS 6190: Probabilistic Machine Learning \semester}
+\author{Homework \assignmentId}
+\date{Handed out: \releaseDate\\
+  Due: \dueDate}
+
+\begin{document}
+\maketitle
+
+\input{emacscomm}
+\footnotesize
+	\begin{itemize}
+		\item You are welcome to talk to other members of the class about
+		the homework. I am more concerned that you understand the
+		underlying concepts. However, you should write down your own
+		solution. Please keep the class collaboration policy in mind.
+		
+		\item Feel free discuss the homework with the instructor or the TAs.
+		
+		\item Your written solutions should be brief and clear. You need to
+		show your work, not just the final answer, but you do \emph{not}
+		need to write it in gory detail. Your assignment should be {\bf no
+			more than 10 pages}. Every extra page will cost a point.
+		
+		\item Handwritten solutions will not be accepted.
+		
+		\item The homework is due by \textbf{midnight of the due date}. Please submit
+		the homework on Canvas.
+	\end{itemize}
+
+
+
+\section*{Warm up[100 points + 5 bonus]}	
+\label{sec:q1}
+
+%independency, conditional distribution, expectation, variance, basic properties
+%gradient calcualtion, logistic function, second derivatives
+%
+\begin{enumerate}
+%\item~[5 points] We use sets to represent events. For example, toss a fair coin $5$ times, and the event can be represented by the set of ``Heads" or ``Tails" after each tossing. Let a specific event $A$ be ``at least one head after tossing $5$ times". Calculate the probability that event $A$ happens, i.e., $p(A)$.
+
+
+\item~[2 points] Given two events $A$ and $B$, prove that 
+\begin{align}
+&p(A \cup B) \le p(A) + p(B) \nonumber \\
+&p(A \cap B) \le p(A), p(A \cap B) \le p(B) \nonumber
+\end{align}
+When does the equality hold?
+\item~[2 points] Let $\{A_1, \ldots, A_n\}$ be a collection of events. Show that
+\[
+p(\cup_{i=1}^n A_i) \le \sum_{i=1}^n p(A_i).
+\]
+When does the equality hold? (Hint: induction)
+%\item~[5 points] Given three events $A$, $B$ and $C$, show that
+%\[
+%p(A\cap B\cap C) = p(A|B\cap C)p(B|C)p(C)
+%\]
+\item~[14 points]  We use $\EE(\cdot)$ and $\VV(\cdot)$ to denote a random variable's mean (or expectation) and variance, respectively. Given two discrete random variables $X$ and $Y$, where $X \in \{0, 1\}$ and $Y \in \{0,1\}$. The joint probability $p(X,Y)$ is given in as follows:
+\begin{table}[h]
+        \centering
+        \begin{tabular}{ccc}
+        \hline\hline
+         & $Y=0$ & $Y=1$ \\ \hline
+         $X=0$ & $3/10$ & $1/10$ \\ \hline
+         $X=1$  & $2/10$ & $4/10$ \\ \hline\hline
+        \end{tabular}
+        %\caption{Training data for the alien invasion problem.}\label{tb-alien-train}
+        \end{table}
+	
+        \begin{enumerate}
+            \item~[10 points] Calculate the following distributions and statistics. 
+            \begin{enumerate}
+            \item the the marginal distributions $p(X)$ and $p(Y)$
+            \item the conditional distributions $p(X|Y)$ and $p(Y|X)$
+            \item $\EE(X)$, $\EE(Y)$, $\VV(X)$, $\VV(Y)$
+            \item  $\EE(Y|X=0)$, $\EE(Y|X=1)$,  $\VV(Y|X=0)$, $\VV(Y|X=1)$ 
+            \item  the covariance between $X$ and $Y$
+            \end{enumerate}
+            \item~[2 points] Are $X$ and $Y$ independent? Why?
+            \item~[2 points] When $X$ is not assigned a specific value, are $\EE(Y|X)$ and $\VV(Y|X)$ still constant? Why?
+        \end{enumerate}
+\item~[9 points] Assume a random variable $X$ follows a standard normal distribution, \ie $X \sim \N(X|0, 1)$. Let $Y = e^{-X^2}$. Calculate the mean and variance of $Y$.
+\begin{enumerate}
+	\item $\EE(Y)$
+	\item $\VV(Y)$
+	\item $\text{cov}(X, Y)$
+\end{enumerate}
+
+\item~[8 points] Derive the probability density functions of the following transformed random variables. 
+\begin{enumerate}
+	\item $X \sim \N(X|0, 1)$ and $Y = X^3$.
+	%\item $\x =[x_1, x_2]^\top \sim \N(\x|\0, [1, -1/2;1/2,1])$ and $y =3 x_1 + 2x_2$. 
+	\item $\left[\begin{array}{c}X_1 \\ X_2\end{array}\right] \sim \N\big(\left[\begin{array}{c}X_1 \\ X_2\end{array}\right]|\left[\begin{array}{c}0 \\ 0 \end{array}\right], \left[\begin{array}{cc}1 & -1/2 \\ -1/2 & 1\end{array}\right]\big)$ and $\left[\begin{array}{c}Y_1 \\ Y_2\end{array}\right] = \left[\begin{array}{cc}1 & 1/2\\-1/3&1\end{array}\right]\left[\begin{array}{c}X_1 \\ X_2\end{array}\right]$.
+\end{enumerate}
+
+\item~[10 points]  Given two random variables $X$ and $Y$, show that 
+\begin{enumerate}
+\item $\EE(\EE(Y|X)) = \EE(Y)$
+\item
+$\VV(Y) = \EE(\VV(Y|X)) + \VV(\EE(Y|X))$
+\end{enumerate}
+(Hints: using definition.)
+
+%\item~[20 points]  Let us go back to the coin tossing example. Suppose we toss a coin for $n$ times, \textit{independently}. Each toss we have $\frac{1}{2}$ chance to obtain the head. Let us denote the total number of heads by $c(n)$. Derive the following statistics. You don't need to give the numerical values. You only need to provide the formula.
+%\begin{enumerate}
+%\item $\EE(c(1))$, $\VV(c(1))$
+%\item $\EE(c(10))$, $\VV(c(10))$
+%\item $\EE(c(n))$, $\VV(c(n))$
+%\end{enumerate} 
+%What can you conclude from comparing the expectations and variances with different choices of $n$?  
+
+\item~[9 points] Given a logistic function, $f(\x) = 1/(1+\exp(-\a^\top \x))$ ($\x$ is a vector),  
+\begin{enumerate}
+\item derive $\frac{\d f(\x)}{\d \x}$
+\item derive $\frac{\d^2 f(\x)}{\d \x^2}$, \ie the Hessian matrix
+\item show that $-f(\x)$ is convex
+\end{enumerate}
+Note that $0 \le f(\x) \le 1$.
+
+\item ~[10 points] Derive the convex conjugate for the following functions
+\begin{enumerate}
+\item $f(x) = -\log(x)$
+\item $f(\x) = \x^\top \A^{-1} \x$ where $\A \succ 0$
+\end{enumerate}
+
+\item~[20 points] Derive the (partial) gradient of the following functions. Note that bold small letters represent vectors, bold captial letters matrices, and non-bold letters just scalars.
+\begin{enumerate}
+	\item $f(\x) = \x^\top \A \x$, derive $\frac{\partial f}{\partial \x}$
+	\item $f(\x)  =\left(\I + \x\x^\top\right)^{-1} \x$, derive $\frac{\partial f}{\partial \alpha}$
+	\item $f(\x) = \log |\K + \alpha \I|$, where $|\cdot|$ means the determinant. Derive $\frac{\partial f}{\partial \sigma}$
+	\item $f(\bmu, \bSigma) = \log\big(\N(\a|\A\bmu, \S\bSigma\S^\top)\big)$, derive $\frac{\partial f}{\partial \bmu}$ and $\frac{\partial f}{\partial \bSigma}$,
+	\item $f(\bSigma) = \log\big(\N(\a|\b, \K\otimes \bSigma)\big)$ where $\otimes$ is the Kronecker product (Hint: check Minka's notes).
+\end{enumerate}
+\item~[2 points] Given the multivariate Gaussian probability density, $$p(\x|\bmu, \bSigma) = |2\pi \bSigma|^{-\frac{1}{2}}\exp\left(- (\x-\bmu)^\top\bSigma^{-1}(\x-\bmu)\right).$$ Show that the density function achieves the maximum when $\x = \bmu$.  
+\item~[5 points] Show that $$\int \exp(-\frac{1}{2\sigma^2}x^2) \d x = \sqrt{2\pi \sigma^2}.$$ Note that this is about  how the normalization constant of the Gaussian density is obtained. Hint: consider its square and use double integral. 
+\item~[5 points] The gamma function is defined as $$\Gamma(x) = \int_0^\infty u^{x-1}e^{-u} \d u.$$ Show that $\Gamma(1) = 1$ and $\Gamma(x+1) = x\Gamma(x)$. Hint: using integral by parts. 
+\item~[2 points] By using Jensen's inequality with $f(x) = \log(x)$, show that for any collection of positive numbers $\{x_1, \ldots, x_N\}$,
+$$\frac{1}{N}\sum_{n=1}^N x_n \ge \left(\prod_{n=1}^N x_n\right)^{\frac{1}{N}}.$$
+\item~[2 points] Given two probability density functions $p(\x)$ and $q(\x)$, show that $$\int p(\x)\log\frac{p(\x)}{q(\x)}\d \x \ge 0.$$
+\item~[\textbf{Bonus}][5 points] Show that for any square matrix $\X \succ 0$, $\log\det\X$ is concave to $\X$. 
+\end{enumerate}
+
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,127 @@
+\documentclass[12pt, fullpage,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\newcommand{\semester}{Spring 2022}
+\newcommand{\assignmentId}{2}
+\newcommand{\releaseDate}{22 Feb, 2022}
+\newcommand{\dueDate}{11:59pm, 15 March, 2022}
+
+\newcommand{\bx}{{\bf x}}
+\newcommand{\bw}{{\bf w}}
+
+\title{CS 6190: Probabilistic Machine Learning \semester}
+\author{Homework \assignmentId}
+\date{Handed out: \releaseDate\\
+  Due: \dueDate}
+
+\begin{document}
+\maketitle
+
+\input{emacscomm}
+\footnotesize
+	\begin{itemize}
+		\item You are welcome to talk to other members of the class about
+		the homework. I am more concerned that you understand the
+		underlying concepts. However, you should write down your own
+		solution. Please keep the class collaboration policy in mind.
+		
+		\item Feel free discuss the homework with the instructor or the TAs.
+		
+		\item Your written solutions should be brief and clear. You need to
+		show your work, not just the final answer, but you do \emph{not}
+		need to write it in gory detail. Your assignment should be {\bf no
+			more than 10 pages}. Every extra page will cost a point.
+		
+		\item Handwritten solutions will not be accepted.
+		
+		\item The homework is due by \textbf{midnight of the due date}. Please submit
+		the homework on Canvas.
+	\end{itemize}
+
+
+
+\section*{Analytical problems [60 points + 25 bonus]}	
+\label{sec:q1}
+%1. show Jeffery's prior for Gaussian
+%2. show Jeffern's prior for Poisson 
+\begin{enumerate}
+\item~[10 points] Given a Gaussian likelihood, $p(x|\mu, \sigma)=\N(x|\mu, \sigma^2)=\frac{1}{\sqrt{2\pi}\sigma}\exp\big(-\frac{1}{2\sigma^2}(x-\mu)^2\big)$,  following the general definition of Jeffery's prior, 
+\begin{enumerate}
+	\item~[5 points] show that given $\sigma$ fixed, the Jeffery's prior over $\mu$, $\pi_J(\mu) \propto 1$;
+	\item~[5 points] show that given $\mu$ fixed, the Jeffery's prior over $\sigma$, $\pi_J(\sigma) \propto \frac{1}{\sigma}$.
+\end{enumerate}
+
+\item~[5 points] Derive the Jeffery's prior for $\lambda$ in the Poisson likelihood, $p(x=n) = e^{-\lambda}\frac{\lambda^n}{n!}$.
+
+\item~[5 points] Given an infinite sequence of Independently Identically Distributed (IID) random variables, show that they  are exchangeable. 
+
+
+\item~[10 points] We discussed Polya's Urn  problem as an example of exchangeability. If you do  not recall, please look back at the slides we shared in the course website. Now, given  two finite sequences $(0, 1, 0, 1)$ and $(1,1, 0, 0)$,  derive their probabilities and show they are the same. 
+
+\item~[10 points] For the logistic regression model, we assign a Gaussian prior over the feature weights,  $p(\w) = \N(\w|\0, \lambda\I)$. Please derive the Newton-Raphson updates. 
+
+\item~[\textbf{Bonus}][20 points]  For the probit regression model, we assign a Gaussian prior over the feature weights,  $p(\w) = \N(\w|\0, \lambda\I)$. Please derive the Newton-Raphson updates. 
+   
+\item~[10 points] What are the link functions of the following models?
+\begin{enumerate}
+	\item~[5 points] Logistic regression
+	\item~[5 points] Poisson regression: $p(x=n) = e^{-\lambda}\frac{\lambda^n}{n!}$ where $\lambda = \w^\top \bphi$. 
+\end{enumerate}
+
+\item~[10 points] As we discussed in the class, the probit regression model is equivalent to given each feature vector $\bphi$, sampling a latent variable $z$ from $\N(z|\w^\top \bphi,1)$,  and then sampling the binary label $t$ from the step distribution, $p(t|z) = \mathds{1}(t=0)\mathds{1}(z< 0) + \mathds{1}(t=1)\mathds{1}(z\ge 0)$ where $\mathds{1}(\cdot)$ is the indicator function. Show that if we marginalize out $z$, we recover the original likelihood of the probit regression.  
+\item~[\textbf{Bonus}][5 points] For polynomial regression (1d feature vector), show that given $N$ training points, you can always choose the highest order $M$ for the polynomial terms such that your model results in $0$ training error (\eg mean squared error or mean absolute error).  Please give the corresponding regression function as well.
+
+
+
+\end{enumerate}
+
+\section*{Practice [40 points + 45 Bonus]}
+\begin{enumerate}
+	\item~[15 Points] Let us generate a simulation dataset for fun. We consider a linear regression model $y(\x, \w) = w_0 + w_1 x$. We set the ground-truth $w_0 = -0.3$ and $w_1 = 0.5$. We generate $20$ samples $[x_1, \ldots, x_{20}]$ from the uniform distribution in $[-1, 1]$. For each sample $x_n$, we obtain an sample $y_n$ by first calculating $w_0 + w_1 x_n$ with the ground-truth values of $w_0$ and $w_n$, and then adding a Gaussian noise with zero mean, standard deviation $0.2$. Now let us verify what we have discussed in the class. We use a Bayesian linear regression model. The prior of $\w$ is $\N(\w|\0, \alpha \I)$, and the likelihood for each sample is $p(y_n|\x_n, \w) = \N(y_n|w_0 + w_1x, \beta^{-1}\I)$. Here we set $\alpha = 2$ and $\beta = 25$. 
+	\begin{enumerate}
+		\item~[3 points] Draw the heat-map of the prior $p(\w)$ in the region $w_0 \in [-1, 1]$ and $w_1 \in [-1, 1]$, where you represent the values of $p(\w)$ for different choices of $\w$ with different colors. The darker some given color (\eg red), the larger the value; the darker some the other given color (\eg blue), the smaller the value.  Most colors should be in between. Then sample $20$ instances of $\w$ from $p(\w)$. For each $w$, draw a line $y = w_0 + w_1x$ in the region $x, y \in [-1, 1]$. Ensure these $20$ lines are in the same plot. What do you observe?
+		\item~[3 points] Calculate and report the posterior distribution of $\w$ given $(\x_1, y_1)$. Now draw the heat map of the distribution. Also draw the ground-truth of $w_0$ and $w_1$ in the heat map.  Then from the posterior distribution, sample $20$ instances of $\w$, for each of which draw a line  $y = w_0 + w_1x$ in the region $x, y \in [-1, 1]$. Ensure these 20 lines are in the same plot. Also draw $(x_1, y_1)$ as a circle in that plot. What do you observe? Why?
+		\item~[3 points] Calculate and report the posterior distribution of $\w$ given $(\x_1, y_1)$ and $(\x_2, y_2)$. Then draw the plots as the above. What do you observe now?  
+		\item~[3 points] Calculate and report the posterior distribution of $\w$ given $\{(\x_1, y_1), \ldots, (\x_5, y_5)\}$. Then draw the plots as the above. What do you observe now? 
+		\item~[3 points] Calculate and report the posterior distribution of $\w$ given all the $20$ data points. Then draw the plots as the above. What do you observe now?  
+	\end{enumerate}
+	
+	\item~[25 points] We will implement  Logistic regression and Probit regression for a binary classification task --- bank-note authentication. Please download the data ``bank-note.zip'' from Canvas. The features and labels are listed in the file ``bank-note/data-desc.txt''. The training data are stored in the file ``bank-note/train.csv'', consisting of $872$ examples. The test data are stored in ``bank-note/test.csv'', and comprise of $500$ examples. In both the training and testing datasets, feature values and labels are separated by commas. To ensure numerical stability and avoid overfitting, we assign the feature weights a standard normal prior $\N(\0, \I)$.  
+	\begin{enumerate}
+
+	\item~[15 points] Implement Newton-Raphson scheme to find the MAP estimation of the feature weights in the logistic regression model. Set the maximum number of iterations to $100$ and the tolerance level to be $1e-5$,  \ie when the norm of difference between the weight vectors after one update is below the tolerance level, we consider it converges and stop updating the weights any more. Initially, you can set all the weights to be zero. Report the prediction accuracy on the test data. Now set the initial weights values be to be randomly generated, say, from the standard Gaussian, run and test your algorithm. What do you observe? Why? 
+	\item~[10 points]  Implement MAP estimation algorithm for Probit regression model. You can calculate the gradient and feed it to any optimization algorithm, say, L-BFGS. Set the maximum number of iterations to $100$ and the tolerance level to $1e-5$. Initially, you can set all the weights to zero. Report the prediction accuracy  on the test data. Compared with logistic regression, which one is better? 
+	Now set the initial weights values be to be randomly generated, say, from the standard Gaussian, run and test your algorithm. What do you observe? Can you guess why? 
+	\item~[\textbf{Bonus}][15 points]. Implement Newton-Raphson scheme to find the MAP estimation for Probit regression. Report the prediction accuracy 
+
+	
+\end{enumerate}
+
+	
+	\item~[\textbf{Bonus}][30 points]  We will implement a multi-class logistic regression model for car evaluation task. The dataset is from UCI repository(\url{https://archive.ics.uci.edu/ml/datasets/car+evaluation}). Please download the processed dataset (car.zip) from Canvas.  In this task, we have $6$ car attributes, and the label is the evaluation of the car. The attribute and label values are listed in the file ``data-desc.txt". All the attributes are categorical. Please convert each categorical attribute into binary features. For example, for ``safety: low, med, high'', we convert it into three binary features: ``safety'' is ``low'' or not, ``safety'' is ``med'' or not, and ``safety'' is  ``high'' or not. 
+	The training data are stored in the file ``train.csv'', consisting of $1,000$ examples. The test data are stored in ``test.csv'', and comprise $728$ examples. In both training and test datasets, attribute values are separated by commas; the file ``data-desc.txt''  lists the attribute names in each column.  To ensure numerical stability and avoid overfitting, we assign the feature weights a standard normal prior $\N(\0, \I)$.  
+	\begin{enumerate}
+		\item~[15 points] Implement MAP estimation algorithm for multi-class logistic regression model. To do so, you can calculate the gradient and feed it to some optimization package, say, L-BFGS. Report the prediction accuracy on the test data.
+		\item~[15 points] Let us use an ``ugly'' trick to convert the multi-class classification problem into a binary classification problem.
+		Let us train four logistic regression models, where each model predicts one particular label, \ie ``unacc" or not, ``acc'' or not, ``good'' or not, and ``vgood'' or not. Then for each test example, we run the models to get four logistic scores, \ie the probability that each label is one. We choose the label with the  highest score as the final prediction. Report the prediction accuracy on the test data. As compared with multi-class logistic regression ,which one is better? 
+	\end{enumerate}
+	
+	
+	
+
+	
+\end{enumerate}
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
