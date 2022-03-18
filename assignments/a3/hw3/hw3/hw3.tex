@@ -1,0 +1,144 @@
+\documentclass[12pt, fullpage,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cancel}
+%\usepackage{graphicx}
+%\usepackage{subfig}
+
+\newcommand{\semester}{Spring 2022}
+\newcommand{\assignmentId}{3}
+\newcommand{\releaseDate}{15 Mar, 2022}
+\newcommand{\dueDate}{11:59pm, 29 Mar, 2022}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+\newcommand{\bx}{{\bf x}}
+\newcommand{\bw}{{\bf w}}
+
+\title{CS 6190: Probabilistic Machine Learning \semester}
+\author{Homework \assignmentId}
+\date{Handed out: \releaseDate\\
+  Due: \dueDate}
+
+\begin{document}
+\maketitle
+
+\input{emacscomm}
+\footnotesize
+	\begin{itemize}
+		\item You are welcome to talk to other members of the class about
+		the homework. I am more concerned that you understand the
+		underlying concepts. However, you should write down your own
+		solution. Please keep the class collaboration policy in mind.
+		
+		\item Feel free discuss the homework with the instructor or the TAs.
+		
+		\item Your written solutions should be brief and clear. You need to
+		show your work, not just the final answer, but you do \emph{not}
+		need to write it in gory detail. Your assignment should be {\bf no
+			more than 10 pages}. Every extra page will cost a point.
+		
+		\item Handwritten solutions will not be accepted.
+		
+		\item The homework is due by \textbf{midnight of the due date}. Please submit
+		the homework on Canvas.
+	\end{itemize}
+
+
+
+\section*{Analytical problems [100 points + 40 bonus]}	
+\label{sec:q1}
+%1. show Jeffery's prior for Gaussian
+%2. show Jeffern's prior for Poisson 
+\begin{enumerate}
+\item~[13 points] The joint distribution over three binary variables are given in Table \ref{tb:abc}. Show by direct evaluation that this distribution has the property that $a$ and $b$ are marginally dependent, so that $p(a, b) \neq p(a)p(b)$, but that they become independent conditioned on $c$, \ie  $p(a,b|c) = p(a|c)p(b|c)$. 
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|c|c}
+		\hline
+		a & b & c  & p(a,b,c)\\
+		\hline
+		0 & 0 & 0 & 0.192\\
+		0 & 0 & 1 & 0.144\\
+		0 & 1 & 0 & 0.048\\
+		0 & 1 & 1 & 0.216\\
+	    1 & 0 & 0 & 0.192\\
+	    1 & 0 & 1  & 0.064\\
+	    1 & 1 & 0 & 0.048\\
+	    1 & 1 & 1 & 0.096\\
+	    \hline
+	\end{tabular}
+\caption{Joint distribution of $a,b,c$.} \label{tb:abc}
+\end{table}
+
+\item~[12 points] Using the d-separation algorithm/criterion (Bayes ball algorithm) to show that the conditional distribution for a node $x$ in a directed graph, conditioned on all of the nodes in its Markov blanket, is independent of the remaining variables in the graph.
+
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.3\linewidth]{./fig1.pdf} 
+\caption{Graphical model.} \label{fig:graph}
+\end{figure}
+
+\item~[15 points] See the graphical model in Figure \ref{fig:graph}. Recall what we have discussed in the class. Show that $a \independent b | \emptyset $. Suppose we have observed the variable $d$. Show that in general $a \cancel{ \independent} b | d$.
+
+\item~[10  points] Convert the directed graphical model in Figure \ref{fig:graph} into an undirected graphical model. Draw the structure and write down the definition of the potential functions. 
+
+\item~[15 points] Write down every step of the sum-product algorithm for the graphical model shown in Figure \ref{fig:graph2}. Note that you need to first choose a root node, and write down how to compute each message. Once all your messages are ready, please explain how to compute the marginal distribution $p(x_4, x_5)$.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{./fig2.pdf} 
+	\caption{Factor graph.} \label{fig:graph2}
+\end{figure}
+
+
+\item~[10 points] Now if $x_2$ in Figure \ref{fig:graph2} is observed, explain how to conduct the sum-product algorithm, and compute the posterior distribution $p(x_4, x_5|x_2)$.
+
+\item~[10 points] Suppose all the random variables in Figure \ref{fig:graph2} are discrete, and no one has been observed. Now we want to find the configuration of the $x_1, \ldots, x_5$ to maximize the joint probability. Write done every step of the max-sum algorithm to calculate the maximum joint probability and to find the corresponding configurations of each random variable. 
+
+
+\item~[\textbf{Bonus}][20 points] Show the message passing protocol we discussed in the class is always valid on the tree-structured graphical models--- whenever we compute a message (from a factor to a variable or a variable to a factor), the dependent messages are always available. Hint: use induction. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{./fig3_1.pdf} 
+	\caption{Model 1.} \label{fig:graph3}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{./fig3_2.pdf} 
+	\caption{Model 2.} \label{fig:graph4}
+\end{figure}
+
+
+\item~[15 points] Use d-separation algorithm (Bayes ball) to determine if $a \independent d | e$ in the graphical  model shown in Figure \ref{fig:graph3}, and if $a \independent d | b$ in the graphical model  shown in Figure  \ref{fig:graph4}. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{./fig4.pdf} 
+	\caption{Directed.} \label{fig:graph5}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{./fig5.pdf} 
+	\caption{Undirected.} \label{fig:graph6}
+\end{figure}
+
+\item~[\textbf{Bonus}][20 points] We have listed two examples in the class to  show that in terms of the expressiveness (i.e., conditional independence) of the directed and undirected graphical models , there is not a guarantee that who is better than who. 
+\begin{enumerate}
+	\item~[10 points] Now show that for the directed graphical model in Figure \ref{fig:graph5}, we cannot find an equivalent undirected graphical model to express the same set of conditional independence.
+	\item~[10 points] Show that for the undirected graphical model in Figure \ref{fig:graph6}, we cannot find an equivalent directed graphical model to express the same set of conditional independence. 
+\end{enumerate}
+
+
+\end{enumerate}
+
+\end{document}
