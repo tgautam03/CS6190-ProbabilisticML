@@ -1,0 +1,97 @@
+\documentclass[12pt, fullpage,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cancel}
+%\usepackage{graphicx}
+%\usepackage{subfig}
+
+\newcommand{\semester}{Spring 2022}
+\newcommand{\assignmentId}{4}
+\newcommand{\releaseDate}{31 March, 2022}
+\newcommand{\dueDate}{11:59pm, 15 April, 2022}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+\newcommand{\bx}{{\bf x}}
+\newcommand{\bw}{{\bf w}}
+
+\title{CS 6190: Probabilistic Machine Learning \semester}
+\author{Homework \assignmentId}
+\date{Handed out: \releaseDate\\
+  Due: \dueDate}
+
+\begin{document}
+\maketitle
+
+\input{emacscomm}
+\footnotesize
+	\begin{itemize}
+		\item You are welcome to talk to other members of the class about
+		the homework. I am more concerned that you understand the
+		underlying concepts. However, you should write down your own
+		solution. Please keep the class collaboration policy in mind.
+		
+		\item Feel free discuss the homework with the instructor or the TAs.
+		
+		\item Your written solutions should be brief and clear. You need to
+		show your work, not just the final answer, but you do \emph{not}
+		need to write it in gory detail. Your assignment should be {\bf no
+			more than 10 pages}. Every extra page will cost a point.
+		
+		\item Handwritten solutions will not be accepted.
+		
+		\item The homework is due by \textbf{midnight of the due date}. Please submit
+		the homework on Canvas.
+	\end{itemize}
+
+%GMM
+%Bayes logistic regression, VB, Laplace, Laplace Hession, 
+%LDA 
+
+\section*{Practice  [100 points + 100 bonus]}	
+\label{sec:q1}
+\begin{enumerate}
+	\item~[20 points] Suppose we have a scalar distribution, 
+	\[
+	p(z) \propto \exp(-z^2)\sigma(10z + 3).
+	\]
+	\begin{enumerate}
+		\item~[3 points] Although the normalization constant is not analytical, we can use Gauss-Hermite quadrature to calculate an accurate approximation. Please base on the example in ``data/example-code/gmq\_example.py'', calculate the numerical approximation of the normalization constant, and report its value. With the normalization constant, please draw the density curve of $p(z)$, in the range $z \in [-5, 5]$. 
+		\item~[5 points] Implement the Laplace approximation of $p(z)$, and report the mean and variance of your Gaussian distribution. Draw the density of your Laplace approximation in the same plot as in (a). 
+		\item~[10 points] Use the local variational inference method and EM-style updates as we discussed in the class (for logistic regression) to implement the variational approximation to $p(z)$. Report the form of your approximate distribution, and draw its density in the same plot as above.
+		\item~[2 points] By comparing the ``ground-truth'' (from (a)) and the approximations (from (b,c)), what do you observe and conclude?
+	\end{enumerate}
+
+	\item~[50 points] Let us work on a real-world dataset we have met before. Please download the data from the folder``data/bank-note''. The features and labels are listed in the file ``data-desc.txt''. The training data are stored in the file ``train.csv'', consisting of $872$ examples. The test data are stored in ``test.csv'', and comprise of $500$ examples. In both the training and testing datasets, feature values and labels are separated by commas. We assign the feature weight vector $\w$ a standard normal prior $\N(\0, \I)$.  
+	\begin{enumerate}
+		\item~[7 points] Implement the standard Laplace approximation to the posterior distribution of the feature weight vector. Report your approximate posterior. Now, use Gauss-Hermite quadrature to implement the calculation of the predictive distribution. Please be careful: \textbf{you need to do a proper variable transformation in the integral before applying the Gauss-Hermite quadrature because you integrate  with a Gaussian like $\N(x|\mu, \sigma^2)$ rather than $\exp(-x^2)$!} Now we test the performance with two measures. First, we calculate the inner-product between the posterior mean of the weight vector and the feature vector of each test example, and throw the inner-product into the sigmoid function to calculate the probability that the test example is positive. If the probability is no less than 0.5, we classify the example to be positive (\ie 1) otherwise we classify the example to be negative (\ie 0). Report the prediction accuracy. Second, we calculate the average predictive likelihood of the test samples, namely we evaluate the predictive density value of each test sample based on the predictive distribution and then take an average.  Note that in Bayesian learning, the predictive likelihood includes all the information of the (approximate) posterior distribution, hence is more preferred in the evaluation. 
+		\item~[3 points] Implement Laplace approximation with the diagonal Hessian. Report the approximate posterior distribution of the feature weights, the prediction accuracy and average predictive likelihood. 
+		\item~[20 points] Implement variational logistic regression we introduced in the class. Use EM-style updates. Report the variational posterior of the feature weight vector you obtained (\ie a multivariate Gaussian). Report the prediction accuracy and average predictive likelihood. 
+		\item~[15 points] Implement variational logistic regression we introduced in the class.  But this time, you will use the fully factorized posterior,   $q(\w)= \prod_i q(w_i)$ where $w_i$ is $i$-th element in the weight vector $\w$. In the E step, please use the standard mean-field update to alternatively optimize each $q(w_i)$ given all the others fixed. Report your variational posterior (\ie diagonal Gaussian), the prediction accuracy and average predictive likelihood on the test data.  
+		
+		\item~[5 points] Compare the results of the above four approximations. What do you observe and conclude?
+	\end{enumerate}
+
+	\item~[30 points] Gaussian Mixture Model (GMM). Please download the data ``data/faithful/faithful.txt''  from Canvas. Each row is a sample, including 2 features. Please normalize the features in each column to be in [-1, 1]. Specifically, denote the column by $\x$; then we compute for each $x_i \leftarrow (x_i - \mathrm{mean}(\x))/(\max(\x) - \min(\x))$. 
+	\begin{enumerate}
+		\item~[20 points] Implement EM algorithm for GMM. Set the number of clusters to $2$. Initialize the cluster centers to be [-1, 1] and [1,-1], and the covariance matrix to be $0.1\cdot\I$ for both clusters. Run your EM algorithm for $100$ iterations. For iteration $1$, $2$, $5$, $100$, please draw the figures showing the corresponding cluster centers and memberships. Specifically, for each figure, first draw the scatter plots of the data points and your cluster centers. Each data point is assigned to the cluster that has a great posterior probability to include that data point. Please draw the cluster memberships with different colors. 
+		\item~[7 points] Now initialize the cluster centers to be [-1, -1] and [1, 1] and covariance matrix to be $0.5 \cdot \I$ for both clusters. Run your EM algorithm for $100$ iterations. Draw the figures showing the cluster centers and memberships for iteration $1$, $2$, $5$, $100$. 
+		\item~[3 points] Compare the results in (a) and (b), what do you observe and conclude?
+	\end{enumerate}
+
+	\item~[100 points][\textbf{Bonus}] Latent Dirichlet Allocation (LDA). Please download the pre-processed corpus from ``data/lda''. From ``ap.txt'', you can see the original Associated Press corpus. ``ap.dat'' are the processed data which you will work on. Each row in ``ap.dat'' represents a document. In total, we have $2,246$ documents. The first number in each row is the number of words in the document. The following are a list of  \textbf{word-id}:\textbf{count} items. Word-id starts with 0. The corresponding word list is given in ``vocab.txt''. The first row correspond to Word-id 0, second, Word-id 1, and continue. 
+	
+	\begin{enumerate}
+		\item~[70 points] Implement the mean-field variational EM algorithm for LDA inference as we discussed in the class. Following the orignal LDA paper ( \url{http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf}) to implement the perplexity calculation on test documents (Sec. 7.1). Please randomly select $10\%$ documents as the test set, and run your LDA inference algorithm on the remaining $90\%$ documents. Vary the number of topics from \{5, 10, 15, 20, 50, 100, 200\}. Run your algorithm until convergence or $500$ iterations have achieved. Draw a figure to show how the perplexity vary along with the growth of the topic numbers. What do you observe and conclude?
+		\item~[30 points] Set the number of topics to $20$ and run your variational inference algorithm. Examine the top 15 words (\ie with the largest probability) in each learned topic distribution. List a few topics which you think is semantically meaningful and explain why. 
+	\end{enumerate}
+\end{enumerate}
+
+
+\end{document}
