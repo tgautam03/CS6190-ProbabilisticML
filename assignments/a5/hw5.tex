@@ -1,0 +1,129 @@
+\documentclass[12pt, fullpage,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bbm}
+%\usepackage{graphicx}
+%\usepackage{subfig}
+
+\newcommand{\semester}{Spring 2022}
+\newcommand{\assignmentId}{5}
+\newcommand{\releaseDate}{15 Apr, 2022}
+\newcommand{\dueDate}{11:59pm, 2 May, 2022}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+\newcommand{\bx}{{\bf x}}
+\newcommand{\bw}{{\bf w}}
+
+\title{CS 6190: Probabilistic Machine Learning \semester}
+\author{Homework \assignmentId}
+\date{Handed out: \releaseDate\\
+  Due: \dueDate}
+
+\begin{document}
+\maketitle
+
+\input{emacscomm}
+\footnotesize
+	\begin{itemize}
+		\item You are welcome to talk to other members of the class about
+		the homework. I am more concerned that you understand the
+		underlying concepts. However, you should write down your own
+		solution. Please keep the class collaboration policy in mind.
+		
+		\item Feel free discuss the homework with the instructor or the TAs.
+		
+		\item Your written solutions should be brief and clear. You need to
+		show your work, not just the final answer, but you do \emph{not}
+		need to write it in gory detail. Your assignment should be {\bf no
+			more than 10 pages}. Every extra page will cost a point.
+		
+		\item Handwritten solutions will not be accepted.
+		
+		\item The homework is due by \textbf{midnight of the due date}. Please submit
+		the homework on Canvas.
+	\end{itemize}
+
+%GMM
+%Bayes logistic regression, VB, Laplace, Laplace Hession, 
+%LDA 
+
+\section*{Practice  [100 points + 70 bonus]}	
+\label{sec:q1}
+\begin{enumerate}
+	\item~[30 points] For warm-up, let us deal with the same scalar distribution in the last homework, 
+	\[
+	p(z) \propto \exp(-z^2)\sigma(10z + 3).
+	\]
+	You will implement MCMC algorithms to sample from this distribution. To reach the burn-in stage, please run your chain for $100K$ iterations(\ie generate $100K$ samples). Then continue to run $50K$ iterations, pick every $10$-th sample to obtain your final samples.  Set your initial sample to $0$.
+	\begin{enumerate}
+		\item~[14 points] Implement Metroplis-Hasting, with Gaussian proposal, $q(z_{n+1}|z_n) = \N(z_{n+1}|z_{n}, \tau)$. Vary $\tau$ from $\{0.01, 0.1, 0.2, 0.5, 1\}$. Run your chain. For each setting of $\tau$, record the acceptance rate (\ie how many candidate samples are accepted/the total number of candidate samples generated). Draw a figure, where the x-axis represents the setting of $\tau$, and y-axis the acceptance rate. What do you observe?
+		For each setting of $\tau$, draw a figure, show a normalized hist-gram of the $5K$ samples you collected. Please set the number of bins to $50$. If you use Python, please use matplotlib and look up the API at \url{https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.hist.html}. You can set the parameter ``bins'' to 50 and ``density'' to true. Also, please draw the ground-truth density curve (obtained via quadrature --- you did that in the last homework). Now what do you observe?
+		
+		\item~[14 points] Implement Hybrid Monte-Carlo sampling with Leapfrog. Let us fix $L = 10$, and vary $\epsilon$ from $\{0.005, 0.01, 0.1, 0.2, 0.5\}$. Run your chain. Similar to the above, for each setting of $\epsilon$, record the acceptance rate,and draw a figure showing $\epsilon$ \textit{v.s.} acceptance rate. What do you observe? For each setting of $\epsilon$, draw the normalized hist-gram ($50$ bins)of collected $5K$ samples. what do you observe? You can leverage the third-party implementation of leap-frog algorithm if you feel it is too difficult to implement it by yourself. One example is given by \url{https://people.sc.fsu.edu/~jburkardt/py_src/leapfrog/leapfrog.py}. However, using the third-party implementation of HMC (\eg hamiltorch) is NOT allowed. We expect you do understand and are able to implement the algorithmic steps of HMC. 
+		
+		\item~[2 points] Now compare the results from the two MCMC algorithms, what do you observe and conclude?
+	\end{enumerate}
+
+	\item~[20 points] Let us work with a 2-dimensional Gaussian distribution, 
+	\[
+	p(z_1, z_2) = \N(\left[\begin{array}{c}z_1\\z_2
+	\end{array}\right] | \left[\begin{array}{c}0\\0
+	\end{array}\right], \left[\begin{array}{cc} 3 & 2.9\\2.9 & 3\end{array} \right])
+	\]
+	\begin{enumerate}
+		\item~[2 point] Draw $500$ samples from this distribution and show the scatter plot. What do you observe?
+		\item~[10 points] Implement Gibbs sampling to alternatively sample $z_1$ and $z_2$. Set your initial sample to $(-4, -4)$. Run your Gibbs sampler for $100$ iterations. Draw the trajectory of the samples. What do you observe?
+		\item~[8 points] Implement HMC with Leapfrog, set $\epsilon = 0.1$ and $L=20$. Run your HMC for $100$ iterations. Set your initial sample to $(-4, -4)$. Draw the trajectory of the samples. What do you observe? Compare with the results of Gibbs sampling, what do you conclude?
+	\end{enumerate}
+
+	\item~[70 points] Let us work on a real-world dataset we have met before. Please download the data from the folder``data/bank-note''. The features and labels are listed in the file ``data-desc.txt''. The training data are stored in the file ``train.csv'', consisting of $872$ examples. The test data are stored in ``test.csv'', and comprise of $500$ examples. In both the training and testing datasets, feature values and labels are separated by commas. 
+	 
+	\begin{enumerate}
+		\item~[20 points] We assign the feature weight vector $\w$ a standard normal prior $\N(\0, \I)$. Write down the joint probability of the Bayesian logistic regression model. Now, implement HMC with Leapfrog. Set your initial sample to be $\0$. Run your chain for $100K$ iterations to reach the burn-in state; then continue to run $10K$ iterations, pick every $10$-th sample to obtain your posterior samples. Vary $\epsilon$ from $\{0.005, 0.1, 0.2, 0.5\}$ and $L$ from $\{10, 20, 50\}$. As we did before, we can test the predictive accuracy and predictive log-likelihood. Both can involve the posterior distribution of the weights. How? To evaluate the accuracy, for each posterior sample of $\w$ in hand ($1K$ in total), we can use it to make the predictions ($1$ or $0$) on all the test examples and calculate the accuracy. Then we average the prediction accuracy of all the posterior  samples of $\w$. In the same way, we can compute the predictive likelihood. Now you can sense how convenient with posterior samples ---  the integration over posterior distribution is turned to the average across posterior samples! List a table showing different combinations of $\epsilon$ and $\L$ and the resulting predictive accuracy, predictive log-likelihood, and acceptance rate.  What do you observe and conclude?
+		
+		\item~[20 points][\textbf{Bonus}]. We will implement Gibbs sampling for linear classification. However, Bayesian logistic regression does not allow tractable conditional posteriors. So we will use the Bayesian probit model with augmented variables. We have discussed it before in our class, if you cannot remember, please check our slides regarding generalized linear models. Again, we will assign a standard normal prior over $\w$. For each training sample $n$, we introduce an auxiliary variable $z_n$. The joint probability is given by
+		\begin{align}
+		p(\w, \z, \Dcal) = \N(\w|\0, \I)\prod_n \N(z_n|\w^\top \x_n, 1)\mathbbm{1}\big((2y_n-1)z_n\ge 0\big) \label{eq:aug}
+		\end{align}
+		where $\z = [z_1, z_2, \ldots, z_N]^\top$, and $\mathbbm{1}(\cdot)$ is the indicator function. Note that if we marginalize out $\z$, we will recover the original Probit model, 
+		\begin{align}
+		&p(\w, \z, \Dcal) = \N(\w|\0, \I)\prod_n \phi\big((2y_n-1)\w^\top \x_n\big) \notag \\
+		&=\N(\w|\0, \I)\prod_n \mathrm{Bern}\big(y_n|\phi(\w^\top \x_n)\big), \label{eq:probit}
+		\end{align}
+		where $\phi(\cdot)$ is the CDF of the standard normal distribution, $\phi(x) = \int_\infty^x \N(t|0, 1)\d t$. Note that Bayesian logistic regression just replaces $\phi(\cdot)$ by the Sigmoid activation function. Now implement your Gibbs sampling algorithm based on the augmented version \eqref{eq:aug}. Alternatively sample $\w$ and each $z_n$. Note that the conditional posterior of each $z_n$ will be a truncated Gaussian. You can use \texttt{scipy.stats.truncnorm} to generate samples (or implement by yourself). Before coding, please list your derivation of the conditional posteriors. Run your chain for $100K$ iterations to reach the burn-in stage; then continue to run $10K$ iterations, pick every $10$-th sample to obtain your final posterior samples. Now compute and report the predictive accuracy and log-likelihood with your posterior samples. Note that your predictive log-likelihood should be based on the original model \eqref{eq:probit}, rather than the augmented one. How does the performance compare with HMC on Bayesian logistic regression model?
+		
+		\item~[28 points] Finally, we will implement a Bayesian neural network (NN). We will use two intermediate layers, and each layer has the same number of nodes. Vary the number of nodes from $[10, 20, 50]$. Vary the activation function from \{\texttt{tanh}, \texttt{RELU}\}. 	We will use a factorized Gaussian posterior for the NN weights (check out the slides). We will assign a standard normal prior over each weight. The output of the NN will be thrown into a Sigmoid activation function, with which we obtain a Bernoulli likelihood. Please use PyTorch or TensorFlow to implement the \texttt{Bayes by BP} algorithm based on the reparameterization trick plus stochastic optimization. If you prefer other automatic differential library (\eg JAX) , that is totally OK. But please do NOT  implement BP by yourself --- it is a waste of time. Note that you do not need to sample mini-batches in this problem --- because the training set is small. Please use Adam algorithm for stochastic optimization. You can tune the base learning rate from \{1e-3, 0.5e-3, 1e-4, 1e-5\} to find the best result for each layer-width and activation function setting. Initialize posterior mean and variance of each weight to be $0$ and $1$, respectively. Run the Adam algorithm for 1,000 iterations. For each layer width and activation function setting, calculate the predictive log-likelihood and accuracy. How? Use Monte-Carlo approximation. Check out the slides.  Use the variational posterior to generate $100$ samples for the weight vector; With each sample, you can calculate the prediction accuracy and log-likelihood on the test dataset; finally, you report the average results.  To check the behaviour of your BNN, let us pick up one setting: the number of node is 20 and the activation function is \texttt{tanh}. For each iteration,  please use the current posterior mean of the weights to compute the average log-likelihood on the training set and test set respectively. Draw two plots, one plot showing how the training log-likelihood varies along with the number of iterations, the other showing how the test log-likelihood varies along with the number of iterations. What do you observe and conclude?
+		
+		\item~[2 points] Compare the results from Bayesian linear classification and NN models. What do you observe and conclude?
+	\end{enumerate}
+
+
+	\item~[50 points][\textbf{Bonus}] If you feel addictive to neural networks, this is a good chance to do more state-of-the-art work.
+	Please come to the website \url{http://yann.lecun.com/exdb/mnist/} and download the MNIST dataset provided by LeCun et. al. It is a famous benchmark dataset. Your goal is to classify hand-written digits. The dataset includes 60,000 training and 10,000 testing pixel images of size $28 \times 28$. Each image is labelled with its ground-truth number (0-9 inclusive). Please preprocess the data by dividing each pixel values by 126. You will implement two versions of Bayesian neural networks. To select the hyper-parameters, please from the training data randomly select 50,000 digits for training and use the remaining 10,000 digits for validation. After the best hyper-parameters are identified, you train on the whole 60,000 digits again. Your NN output will be $10$ dimensional, which are used to construct the categorical likelihood (\ie softmax) --- check out the slides if you are unclear. Please use Adam for stochastic optimization. We consider to tune the (base) learning rate from \{1e-3, 1e-4, 1e-5\}. 
+	We will use two hidden layers, and each layer has the same number of nodes. 
+	%$\mathbbm{1}$
+	\begin{enumerate}
+		\item~[15 points] First, we consider to place an independent standard normal prior over each weight. We use factorized Gaussian posterior (check the slides).  Implement your Bayes by BP algorithm. Please run your algorithm for 1,000 epochs and report the predictive accuracy. The way to compute the predictive accuracy is the same as in Problem 3. Use your variational posterior of the weights to sample $10$ sets of weights, each weight set are used to predict the labels of the test samples (you choose the label with the largest probability in your model as the prediction) and calculate the accuracy; finally you average the $10$ accuracy values. Vary the number of nodes in each hidden layer from \{400, 800, 1200\}. Try both the \texttt{tanh} and \texttt{RELU} activation functions. Report the prediction accuracy for each combination.  
+		\item~[20 points] Then we consider to assign a spike and slab prior over each weight,
+		\[
+		p(w_i) = \pi \N(w_i|0, \sigma_1^2) + (1-\pi)\N(w_i|0, \sigma_2^2)
+		\]
+		where we tune $-\log(\sigma_1) \in \{0, 1, 2\}$ and $-\log(\sigma_2) \in \{6,7,8\}, \pi \in \{\frac{1}{4}, \frac{1}{2}, \frac{3}{4}\}$. We still use the factorized Gaussian posterior. Implement your Bayes by BP algorithm. Run your algorithm for 1,000 epochs. Report the predictive accuracy when the number of nodes in each hidden layer is in \{400, 800, 1200\}, and the activation function is \texttt{tanh} or \texttt{RELU}. Do you observe many weights have very small posterior variances and means close to $0$? Why did this happen?
+		
+		\item~[10 points] Implement the vanilla NN training with SGD --- namely, we only perform MAP estimation. Run 1,000 epochs. Report the prediction accuracy for the same settings as above. Are your results consistent with Table 1 in the paper~\url{https://arxiv.org/pdf/1505.05424.pdf}? Compared with the two version of BNNs, what do you observe and conclude? 
+		
+		\item~[5 points] Fix the number of nodes per layer to 1,200 and use \texttt{RELU} activation function. For each algorithm, use the validation dataset to choose the best hyper-parameters (e.g., learning rate). With the best hyper-parameter(s), re-run your algorithms on the whole training set, and draw the learning curve --- how does the test accuracy vary along with the number of epochs. Is it consistent with Fig. 2 in the paper~\url{https://arxiv.org/pdf/1505.05424.pdf}? What do you conclude and observe?
+	\end{enumerate}
+
+\end{enumerate}
+
+
+\end{document}
